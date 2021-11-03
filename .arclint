@@ -1,0 +1,17 @@
+{
+  "linters": {
+    "pyflakes": {
+      "type": "pyflakes",
+      "include": "(\\.py$)",
+      "exclude": "(.*/__init__.py)"
+    },
+    "flake8": {
+      "type": "flake8",
+      "include": "(\\.py$)",
+      "exclude": "(.*/__init__.py)",
+      "flags": [
+         "--max-line-length=120"
+      ]
+    }
+  }
+}
