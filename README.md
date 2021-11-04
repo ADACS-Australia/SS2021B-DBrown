@@ -6,7 +6,7 @@ Dependencies:-
 ***
 ### Project setup
 1. If using phabricator/arcanist, check out the arcanist utility library such that the `arcutils` directory is in the project root
-   * `git checkout https://github.com/gravitationalwavedc/gw_arcanist_library.git arcutils`
+   * `git clone https://github.com/gravitationalwavedc/gw_arcanist_library.git arcutils`
 2. Run `poetry install`
 
 ***
