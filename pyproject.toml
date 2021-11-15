@@ -7,6 +7,7 @@ authors = ["Lewis Lakerink <llakerink@swin.edu.au>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 finesse = "^3.0a1"
+appdirs = "^1.4.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

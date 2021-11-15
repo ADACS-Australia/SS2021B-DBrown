@@ -1,18 +1,22 @@
 import abc
 
+from finorch.transport.exceptions import TransportConnectionException
+
 
 class Transport(abc.ABC):
     """
     This is the transport class that should be inherited from to build various transport types
     """
 
-    def init(self, **kwargs):
+    def __init__(self, **kwargs):
         """
         Any transport setup should be done in this function
 
         :param kwargs: Any additional parameters that are required to initialise the transport
         :return: None
         """
+        self.connected = False
+        self.port = None
 
     def connect(self):
         """
@@ -23,12 +27,18 @@ class Transport(abc.ABC):
         :return: None
         """
 
+        if self.connected:
+            raise TransportConnectionException("Transport is already connected")
+
     def disconnect(self):
         """
         Disconnects the transport
 
         :return: None
         """
+
+        if not self.connected:
+            raise TransportConnectionException("Transport is not connected")
 
     def start_job(self, katscript):
         """
@@ -99,4 +109,13 @@ class Transport(abc.ABC):
         :param job_identifier: The UUID of the job to fetch the specified file for
         :param file_path: The path to the file to download
         :return: A bytes object representing the file that was downloaded
+        """
+
+    def terminate(self):
+        """
+        Stops the client and kills any finesse jobs that are running associated with the transport
+
+        Should raise a TransportTerminateException in the event of a problem
+
+        :return: None
         """

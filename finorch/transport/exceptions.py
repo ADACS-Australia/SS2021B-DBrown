@@ -38,3 +38,9 @@ class TransportGetJobFileException(Exception):
     """
     Raised when a problem arises while downloading a job file of a remote job using a transport
     """
+
+
+class TransportTerminateException(Exception):
+    """
+    Raised when a problem arise while terminating a client using a transport
+    """
