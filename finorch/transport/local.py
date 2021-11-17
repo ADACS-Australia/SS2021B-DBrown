@@ -90,7 +90,4 @@ class LocalTransport(Transport):
         if not self.connected:
             raise TransportTerminateException("Client is not connected")
 
-        try:
-            self._client_rpc.terminate()
-        except xmlrpc.client.Fault:
-            pass
+        self._client_rpc.terminate()
