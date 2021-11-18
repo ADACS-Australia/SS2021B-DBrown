@@ -6,8 +6,9 @@ authors = ["Lewis Lakerink <llakerink@swin.edu.au>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-finesse = "^3.0a1"
+finesse = {git = "https://git.ligo.org/finesse/finesse3.git", rev = "develop"}
 appdirs = "^1.4.4"
+exc = "^0.92"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

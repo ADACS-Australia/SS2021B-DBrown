@@ -1,4 +1,5 @@
 import os
+import pathlib
 from configparser import ConfigParser
 from pathlib import Path
 
@@ -78,6 +79,7 @@ class _ConfigManager:
         """
         with open(self._ini_file, 'w') as f:
             self._config.write(f)
+            f.flush()
 
     def _read(self):
         """
@@ -110,6 +112,37 @@ class _ClientConfigManager(_ConfigManager):
         Gets the clients last port
 
         :return: The last port the client was running on, or None
+        """
+        self._read()
+
+        if section := self.get_section("main"):
+            return section.get("port", None)
+
+        return None
+
+    def set_port(self, port):
+        """
+        Sets the clients current port
+
+        :return: None
+        """
+        self._read()
+        self.set("main", "port", port)
+
+
+class WrapperConfigManager(_ConfigManager):
+    """
+    Configuration Manager for the Wrapper.
+    """
+
+    def __init__(self):
+        super().__init__(pathlib.Path.cwd() / "wrapper.ini")
+
+    def get_port(self):
+        """
+        Gets the wrapper's port
+
+        :return: The port the wrapper is running on, or None
         """
         self._read()
 

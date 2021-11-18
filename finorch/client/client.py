@@ -3,40 +3,10 @@ import logging.handlers
 import sys
 import traceback
 from tempfile import NamedTemporaryFile
-from xmlrpc.server import SimpleXMLRPCRequestHandler
-from xmlrpc.server import SimpleXMLRPCServer
 
 from finorch.config.config import client_config_manager
 from finorch.sessions import session_map
-
-
-class RequestHandler(SimpleXMLRPCRequestHandler):
-    rpc_paths = ('/rpc',)
-
-
-class XMLRPCServer(SimpleXMLRPCServer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._quit = False
-
-    def serve_forever(self, **kwargs):
-        """
-        Overrides the serve_forever function to wait for the server to be ready to quit
-
-        :param kwargs: N/A
-        :return: None
-        """
-        while not self._quit:
-            self.handle_request()
-
-    def terminate(self):
-        """
-        Marks the server as ready for termination
-
-        :return: None
-        """
-
-        self._quit = True
+from finorch.utils.xmlrpc import XMLRPCServer
 
 
 def start_client():
@@ -45,21 +15,22 @@ def start_client():
 
     :return: None
     """
-    # Get the session from the provided session parameter
+    # Get the client from the provided session parameter
     if len(sys.argv) != 2:
         raise Exception("Incorrect number of parameters")
 
     if sys.argv[1] not in session_map:
         raise Exception(f"Session type {sys.argv[1]} does not exist.")
 
-    session = session_map[sys.argv[1]]()
+    session_klass = session_map[sys.argv[1]]
+    client = session_klass.client_klass(session_klass)
 
     # Create the XMLRPC server on a random port
-    with XMLRPCServer(('localhost', 0), requestHandler=RequestHandler) as server:
+    with XMLRPCServer(('localhost', 0)) as server:
         server.register_introspection_functions()
 
-        session.client.set_server(server)
-        server.register_instance(session.client)
+        client.set_server(server)
+        server.register_instance(client)
 
         # Save the port in the client configuration
         port = server.server_address[1]
@@ -67,10 +38,7 @@ def start_client():
 
         # Return the port via stdout to the caller
         print(server.server_address[1], flush=True)
-        print("=EOF=")
-
-        logging.info(sys.stdout.fileno())
-        logging.info(sys.stderr.fileno())
+        print("=EOF=", flush=True)
 
         n = NamedTemporaryFile()
         sys.stdout = open(n.name, "w")

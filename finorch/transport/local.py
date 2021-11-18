@@ -1,18 +1,18 @@
-import socket
 import subprocess
 import xmlrpc.client
 
 from finorch.config.config import client_config_manager
 from finorch.transport.exceptions import TransportConnectionException, TransportTerminateException
 from finorch.transport.transport import Transport
+from finorch.utils.port import test_port_open
 
 
 class LocalTransport(Transport):
     """
     Transport for running jobs on the local machine (Where the API is running)
     """
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self._client_rpc = None
 
@@ -27,12 +27,7 @@ class LocalTransport(Transport):
         if port := port or client_config_manager.get_port():
             self.port = int(port)
 
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-            # connect_ex returns 0 if the connection was successful
-            self.connected = sock.connect_ex(("127.0.0.1", int(self.port))) == 0
-
-            sock.close()
+            self.connected = test_port_open(self.port)
 
         return self.connected
 
@@ -48,7 +43,7 @@ class LocalTransport(Transport):
             "python",
             "-m",
             "finorch.client.client",
-            "local"
+            self._session.callsign
         ]
         p = subprocess.Popen(args, stdout=subprocess.PIPE)
 
@@ -78,10 +73,11 @@ class LocalTransport(Transport):
         # Check if the client is already running and start it with subprocess, which will manage it's own finesse
         # processes, if it's not
         if not self._check_client_connectivity():
-            print("Starting client")
             self._spawn_client()
 
-        self._client_rpc = xmlrpc.client.ServerProxy(f'http://localhost:{self.port}/rpc')
+        self._client_rpc = xmlrpc.client.ServerProxy(f'http://localhost:{self.port}/rpc', allow_none=True)
+
+        self._client_rpc.set_exec_path(self.exec_path)
 
     def start_job(self, katscript):
         return self._client_rpc.start_job(katscript)

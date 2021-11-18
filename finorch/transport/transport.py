@@ -8,15 +8,21 @@ class Transport(abc.ABC):
     This is the transport class that should be inherited from to build various transport types
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, session, exec_path, *args, **kwargs):
         """
         Any transport setup should be done in this function
 
         :param kwargs: Any additional parameters that are required to initialise the transport
         :return: None
         """
-        self.connected = False
-        self.port = None
+        self._session = session
+        self._exec_path = exec_path
+        self._connected = False
+        self._port = None
+
+    @property
+    def exec_path(self):
+        return self._exec_path
 
     def connect(self):
         """
@@ -27,7 +33,7 @@ class Transport(abc.ABC):
         :return: None
         """
 
-        if self.connected:
+        if self._connected:
             raise TransportConnectionException("Transport is already connected")
 
     def disconnect(self):
@@ -37,7 +43,7 @@ class Transport(abc.ABC):
         :return: None
         """
 
-        if not self.connected:
+        if not self._connected:
             raise TransportConnectionException("Transport is not connected")
 
     def start_job(self, katscript):
