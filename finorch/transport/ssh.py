@@ -1,4 +1,4 @@
-from finorch.transport.transport import Transport
+from finorch.transport.abstract_transport import Transport
 
 
 class SSHTransport(Transport):

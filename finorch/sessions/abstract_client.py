@@ -43,3 +43,11 @@ class AbstractClient(abc.ABC):
             self._xml_rpc_server.terminate()
 
         return True
+
+    @abc.abstractmethod
+    def start_job(self, katscript):
+        pass
+
+    @abc.abstractmethod
+    def get_job_status(self, job_identifier):
+        pass

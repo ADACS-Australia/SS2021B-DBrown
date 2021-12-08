@@ -3,11 +3,11 @@ import xmlrpc.client
 
 from finorch.config.config import client_config_manager
 from finorch.transport.exceptions import TransportConnectionException, TransportTerminateException
-from finorch.transport.transport import Transport
+from finorch.transport.abstract_transport import AbstractTransport
 from finorch.utils.port import test_port_open
 
 
-class LocalTransport(Transport):
+class LocalTransport(AbstractTransport):
     """
     Transport for running jobs on the local machine (Where the API is running)
     """
@@ -27,9 +27,9 @@ class LocalTransport(Transport):
         if port := port or client_config_manager.get_port():
             self.port = int(port)
 
-            self.connected = test_port_open(self.port)
+            self._connected = test_port_open(self.port)
 
-        return self.connected
+        return self._connected
 
     def _spawn_client(self):
         """
@@ -75,7 +75,11 @@ class LocalTransport(Transport):
         if not self._check_client_connectivity():
             self._spawn_client()
 
-        self._client_rpc = xmlrpc.client.ServerProxy(f'http://localhost:{self.port}/rpc', allow_none=True)
+        self._client_rpc = xmlrpc.client.ServerProxy(
+            f'http://localhost:{self.port}/rpc',
+            allow_none=True,
+            use_builtin_types=True
+        )
 
         self._client_rpc.set_exec_path(self.exec_path)
 
@@ -83,7 +87,31 @@ class LocalTransport(Transport):
         return self._client_rpc.start_job(katscript)
 
     def terminate(self):
-        if not self.connected:
+        if not self._connected:
             raise TransportTerminateException("Client is not connected")
 
         self._client_rpc.terminate()
+
+    def disconnect(self):
+        raise Exception("Not implemented")
+
+    def get_job_file(self, job_identifier, file_path):
+        raise Exception("Not implemented")
+
+    def get_job_file_list(self, job_identifier):
+        raise Exception("Not implemented")
+
+    def get_job_solution(self, job_identifier):
+        return self._client_rpc.get_job_solution(job_identifier)
+
+    def get_job_status(self, job_identifier):
+        return self._client_rpc.get_job_status(job_identifier)
+
+    def get_jobs(self):
+        raise Exception("Not implemented")
+
+    def stop_job(self, job_identifier):
+        raise Exception("Not implemented")
+
+    def update_job_parameters(self, job_identifier, params):
+        raise Exception("Not implemented")

@@ -10,6 +10,12 @@ class TransportStartJobException(Exception):
     """
 
 
+class TransportGetJobStatusException(Exception):
+    """
+    Raised when a problem arise while retrieving the status of a job
+    """
+
+
 class TransportStopJobException(Exception):
     """
     Raised when a problem arises while stopping a job using a transport

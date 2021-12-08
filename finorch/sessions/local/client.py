@@ -55,3 +55,11 @@ class LocalClient(AbstractClient):
 
     def terminate(self):
         return super().terminate()
+
+    def get_job_status(self, job_identifier):
+        raise Exception("Not implemented")
+
+    def get_job_solution(self, job_identifier):
+        exec_dir = self._exec_path / job_identifier
+
+        return open(exec_dir / 'data.pickle', 'rb').read()

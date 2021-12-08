@@ -3,7 +3,7 @@ import abc
 from finorch.transport.exceptions import TransportConnectionException
 
 
-class Transport(abc.ABC):
+class AbstractTransport(abc.ABC):
     """
     This is the transport class that should be inherited from to build various transport types
     """
@@ -24,6 +24,7 @@ class Transport(abc.ABC):
     def exec_path(self):
         return self._exec_path
 
+    @abc.abstractmethod
     def connect(self):
         """
         Connects the transport
@@ -36,6 +37,7 @@ class Transport(abc.ABC):
         if self._connected:
             raise TransportConnectionException("Transport is already connected")
 
+    @abc.abstractmethod
     def disconnect(self):
         """
         Disconnects the transport
@@ -46,6 +48,7 @@ class Transport(abc.ABC):
         if not self._connected:
             raise TransportConnectionException("Transport is not connected")
 
+    @abc.abstractmethod
     def start_job(self, katscript):
         """
         Starts a job using this transport using the model defined by the provided katscript
@@ -56,6 +59,18 @@ class Transport(abc.ABC):
         :return: UUID representing the remote identifier for the job
         """
 
+    @abc.abstractmethod
+    def get_job_status(self, job_identifier):
+        """
+        Gets the job status for the provided job identifier
+
+        Should raise a TransportGetJobStatusException in the event of a problem
+
+        :param job_identifier: The UUID of the job to get the status of
+        :return: a JobStatus indicating the status of the job
+        """
+
+    @abc.abstractmethod
     def stop_job(self, job_identifier):
         """
         Stops a job using this transport with the provided job identifier
@@ -66,6 +81,7 @@ class Transport(abc.ABC):
         :return: None
         """
 
+    @abc.abstractmethod
     def get_jobs(self):
         """
         Fetches all remote jobs using this transport
@@ -75,6 +91,7 @@ class Transport(abc.ABC):
         :return: A list of dicts representing the details of the remote jobs
         """
 
+    @abc.abstractmethod
     def get_job_solution(self, job_identifier):
         """
         Fetches the current (or final) Solution object for the specified job identifier
@@ -85,6 +102,7 @@ class Transport(abc.ABC):
         :return: A Finesse Solution object
         """
 
+    @abc.abstractmethod
     def update_job_parameters(self, job_identifier, params):
         """
         Updates the parameters for the job specified by the specified job identifier
@@ -96,6 +114,7 @@ class Transport(abc.ABC):
         :return: None
         """
 
+    @abc.abstractmethod
     def get_job_file_list(self, job_identifier):
         """
         Retrieves the file list for the specified job identifier
@@ -106,6 +125,7 @@ class Transport(abc.ABC):
         :return: A list of JobFile objects
         """
 
+    @abc.abstractmethod
     def get_job_file(self, job_identifier, file_path):
         """
         Retrieves the specified file for the specified job identifier
@@ -117,6 +137,7 @@ class Transport(abc.ABC):
         :return: A bytes object representing the file that was downloaded
         """
 
+    @abc.abstractmethod
     def terminate(self):
         """
         Stops the client and kills any finesse jobs that are running associated with the transport
