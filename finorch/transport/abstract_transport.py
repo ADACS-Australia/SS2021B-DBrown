@@ -92,17 +92,6 @@ class AbstractTransport(abc.ABC):
         """
 
     @abc.abstractmethod
-    def get_job_solution(self, job_identifier):
-        """
-        Fetches the current (or final) Solution object for the specified job identifier
-
-        Should raise a TransportGetJobSolutionException in the event of a problem
-
-        :param job_identifier: the UUID of the job to get the solution for
-        :return: A Finesse Solution object
-        """
-
-    @abc.abstractmethod
     def update_job_parameters(self, job_identifier, params):
         """
         Updates the parameters for the job specified by the specified job identifier

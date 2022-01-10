@@ -1,4 +1,7 @@
 import abc
+from tempfile import NamedTemporaryFile
+
+import finesse
 
 
 class AbstractSession(abc.ABC):
@@ -18,7 +21,11 @@ class AbstractSession(abc.ABC):
         return self._transport.get_job_status(job_identifier)
 
     def get_job_solution(self, job_identifier):
-        return self._transport.get_job_solution(job_identifier)
+        result = self._transport.get_job_file(job_identifier, 'data.pickle')
+
+        with NamedTemporaryFile() as f:
+            f.write(result)
+            return finesse.load(f.name, 'pickle')
 
     def terminate(self):
         self._transport.terminate()

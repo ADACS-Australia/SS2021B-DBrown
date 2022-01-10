@@ -4,12 +4,19 @@ import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from finorch.sessions.database import Database
+
+
+class DatabaseNotConfiguredException(Exception):
+    pass
+
 
 class AbstractClient(abc.ABC):
     def __init__(self, session_klass):
         self._exec_path = None
         self._xml_rpc_server = None
         self._session_klass = session_klass
+        self._db = None
 
     def set_server(self, server):
         """
@@ -32,6 +39,15 @@ class AbstractClient(abc.ABC):
             self._exec_path = Path(tmpdir.name)
             atexit.register(lambda: tmpdir.cleanup())
 
+        self._db = Database(self._exec_path)
+
+    @property
+    def db(self):
+        if not self._db:
+            raise DatabaseNotConfiguredException()
+
+        return self._db
+
     def terminate(self):
         """
         Called to terminate the XMLRPC server
@@ -50,4 +66,8 @@ class AbstractClient(abc.ABC):
 
     @abc.abstractmethod
     def get_job_status(self, job_identifier):
+        pass
+
+    @abc.abstractmethod
+    def get_job_file(self, job_identifier, file_path):
         pass

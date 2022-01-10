@@ -5,7 +5,6 @@ import pathlib
 import sys
 import traceback
 import xmlrpc.client
-from tempfile import NamedTemporaryFile
 from threading import Thread
 from time import sleep
 
@@ -60,6 +59,9 @@ class AbstractWrapper(abc.ABC):
         while not test_port_open(port):
             sleep(0.1)
 
+        # Touch the 'started' file
+        pathlib.Path('started').touch()
+
         try:
             logging.info("Starting finesse job")
 
@@ -80,12 +82,21 @@ class AbstractWrapper(abc.ABC):
 
             logging.info("Finesse job completed")
         finally:
-            # Kill the rpc server
-            wrapper_rpc_client = xmlrpc.client.ServerProxy(
-                f'http://localhost:{port}/rpc',
-                allow_none=True
-            )
-            wrapper_rpc_client.terminate()
+            # Touch the 'finished' file
+            pathlib.Path('finished').touch()
+
+            try:
+                # Kill the rpc server (If it's running). The deal with this is that when testing, since the
+                # entire wrapper is itself running in a thread, the _run thread is not torn down with the
+                # xml rpc server when terminate is called - therefor the xmlrpc server is killed, but this
+                # thread is still running. When this code is hit, it will raise an exception
+                wrapper_rpc_client = xmlrpc.client.ServerProxy(
+                    f'http://localhost:{port}/rpc',
+                    allow_none=True
+                )
+                wrapper_rpc_client.terminate()
+            except Exception:
+                pass
 
     def run(self):
         pass
@@ -136,20 +147,6 @@ class AbstractWrapper(abc.ABC):
             WrapperConfigManager().set_port(port)
 
             wrapper.start()
-
-            # Only print output and detach stdout/stdin if it's not a local instance
-            from finorch.sessions import LocalSession
-            if session_klass is not LocalSession:
-                # Return the port via stdout to the caller
-                print(server.server_address[1], flush=True)
-                print("=EOF=", flush=True)
-
-                logging.info(sys.stdout.fileno())
-                logging.info(sys.stderr.fileno())
-
-                n = NamedTemporaryFile()
-                sys.stdout = open(n.name, "w")
-                sys.stderr = sys.stdout
 
             # Run the server's main loop
             server.serve_forever()

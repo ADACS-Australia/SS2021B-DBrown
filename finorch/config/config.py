@@ -135,8 +135,8 @@ class WrapperConfigManager(_ConfigManager):
     Configuration Manager for the Wrapper.
     """
 
-    def __init__(self):
-        super().__init__(pathlib.Path.cwd() / "wrapper.ini")
+    def __init__(self, path=None):
+        super().__init__((pathlib.Path(path) if path else pathlib.Path.cwd()) / "wrapper.ini")
 
     def get_port(self):
         """

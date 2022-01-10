@@ -9,6 +9,7 @@ python = "^3.9"
 finesse = {git = "https://git.ligo.org/finesse/finesse3.git", rev = "develop"}
 appdirs = "^1.4.4"
 exc = "^0.92"
+SQLAlchemy = "^1.4.29"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
