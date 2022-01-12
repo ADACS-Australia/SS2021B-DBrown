@@ -1,11 +1,9 @@
 import subprocess
 import xmlrpc.client
 
-from finorch.utils.job_status import JobStatus
-
 from finorch.config.config import client_config_manager
 from finorch.transport.exceptions import TransportConnectionException, TransportTerminateException, \
-    TransportGetJobStatusException, TransportGetJobSolutionException, TransportGetJobFileException
+    TransportGetJobStatusException, TransportGetJobFileException
 from finorch.transport.abstract_transport import AbstractTransport
 from finorch.utils.port import test_port_open
 
@@ -107,12 +105,6 @@ class LocalTransport(AbstractTransport):
 
     def get_job_file_list(self, job_identifier):
         raise Exception("Not implemented")
-
-    def get_job_solution(self, job_identifier):
-        if self.get_job_status(job_identifier) <= JobStatus.RUNNING:
-            raise TransportGetJobSolutionException("Can't get solution as job is not yet finished")
-
-        return self._client_rpc.get_job_solution(job_identifier)
 
     def get_job_status(self, job_identifier):
         status = self._client_rpc.get_job_status(job_identifier)

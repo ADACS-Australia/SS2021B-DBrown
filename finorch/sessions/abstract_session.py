@@ -3,6 +3,9 @@ from tempfile import NamedTemporaryFile
 
 import finesse
 
+from finorch.transport.exceptions import TransportGetJobSolutionException
+from finorch.utils.job_status import JobStatus
+
 
 class AbstractSession(abc.ABC):
     def __init__(self):
@@ -21,6 +24,9 @@ class AbstractSession(abc.ABC):
         return self._transport.get_job_status(job_identifier)
 
     def get_job_solution(self, job_identifier):
+        if self.get_job_status(job_identifier) <= JobStatus.RUNNING:
+            raise TransportGetJobSolutionException("Can't get solution as job is not yet finished")
+
         result = self._transport.get_job_file(job_identifier, 'data.pickle')
 
         with NamedTemporaryFile() as f:

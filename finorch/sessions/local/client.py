@@ -79,11 +79,6 @@ class LocalClient(AbstractClient):
 
         return new_status
 
-    def get_job_solution(self, job_identifier):
-        exec_dir = self._exec_path / job_identifier
-
-        return open(exec_dir / 'data.pickle', 'rb').read()
-
     def get_job_file(self, job_identifier, file_path):
         full_file_path = str(self._exec_path / job_identifier / file_path)
 
@@ -95,3 +90,6 @@ class LocalClient(AbstractClient):
                 return None, f"Unable to retrieve file {full_file_path} as the file could not be read."
 
         return None, f"Unable to retrieve file {full_file_path} as the file does not exist."
+
+    def get_job_file_list(self, job_identifier):
+        pass
