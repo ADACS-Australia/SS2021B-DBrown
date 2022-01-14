@@ -77,3 +77,13 @@ class Database:
 
         results.first().status = new_status
         self.session.commit()
+
+    def get_jobs(self):
+        """
+        Gets the list of jobs
+
+        :return: A list of dictionaries containing job information
+        """
+        data = [r._asdict() for r in self.session.query(Job.id, Job.identifier, Job.start_time, Job.status).all()]
+
+        return data

@@ -3,7 +3,8 @@ import xmlrpc.client
 
 from finorch.config.config import client_config_manager
 from finorch.transport.exceptions import TransportConnectionException, TransportTerminateException, \
-    TransportGetJobStatusException, TransportGetJobFileException
+    TransportGetJobStatusException, TransportGetJobFileException, TransportGetJobFileListException, \
+    TransportGetJobsException
 from finorch.transport.abstract_transport import AbstractTransport
 from finorch.utils.port import test_port_open
 
@@ -104,7 +105,11 @@ class LocalTransport(AbstractTransport):
             raise TransportGetJobFileException(status[1])
 
     def get_job_file_list(self, job_identifier):
-        raise Exception("Not implemented")
+        status = self._client_rpc.get_job_file_list(job_identifier)
+        if type(status) is list:
+            return status
+        else:
+            raise TransportGetJobFileListException(status[1])
 
     def get_job_status(self, job_identifier):
         status = self._client_rpc.get_job_status(job_identifier)
@@ -114,7 +119,11 @@ class LocalTransport(AbstractTransport):
             raise TransportGetJobStatusException(status[1])
 
     def get_jobs(self):
-        raise Exception("Not implemented")
+        status = self._client_rpc.get_jobs()
+        if type(status) is list:
+            return status
+        else:
+            raise TransportGetJobsException(status[1])
 
     def stop_job(self, job_identifier):
         raise Exception("Not implemented")

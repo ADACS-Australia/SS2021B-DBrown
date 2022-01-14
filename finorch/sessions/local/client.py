@@ -4,6 +4,7 @@ import os
 import sys
 import uuid
 
+from pathlib import Path
 from finorch.sessions.abstract_client import AbstractClient
 from finorch.sessions.abstract_wrapper import AbstractWrapper
 from finorch.utils.job_status import JobStatus
@@ -58,6 +59,10 @@ class LocalClient(AbstractClient):
     def terminate(self):
         return super().terminate()
 
+    def get_jobs(self):
+        jobs = self.db.get_jobs()
+        return jobs
+
     def get_job_status(self, job_identifier):
         status = self.db.get_job_status(job_identifier)
 
@@ -66,9 +71,10 @@ class LocalClient(AbstractClient):
         new_status = status
         if status <= JobStatus.RUNNING:
             # Check if the job is completed, or started, or queued
-            if os.path.exists(str(self._exec_path / job_identifier / 'finished')):
+            p = Path(self._exec_path)
+            if (p / job_identifier / 'finished').exists():
                 new_status = JobStatus.COMPLETED
-            elif os.path.exists(str(self._exec_path / job_identifier / 'started')):
+            elif (p / job_identifier / 'started').exists():
                 new_status = JobStatus.RUNNING
             else:
                 new_status = JobStatus.QUEUED
@@ -80,9 +86,9 @@ class LocalClient(AbstractClient):
         return new_status
 
     def get_job_file(self, job_identifier, file_path):
-        full_file_path = str(self._exec_path / job_identifier / file_path)
+        full_file_path = Path(self._exec_path / job_identifier / file_path)
 
-        if os.path.exists(full_file_path):
+        if full_file_path.exists():
             try:
                 with open(full_file_path, 'rb') as f:
                     return f.read()
@@ -92,4 +98,14 @@ class LocalClient(AbstractClient):
         return None, f"Unable to retrieve file {full_file_path} as the file does not exist."
 
     def get_job_file_list(self, job_identifier):
-        pass
+        full_path = Path(self._exec_path / job_identifier)
+        if full_path.exists():
+            # list the files
+            file_list = list()
+
+            for p in full_path.rglob('*.*'):
+                file_list.append([p.name, str(p), p.stat().st_size])
+
+            return file_list
+
+        return None, f"Unable to retrieve file list for the job identifier {job_identifier}"

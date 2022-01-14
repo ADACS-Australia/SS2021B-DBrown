@@ -65,9 +65,17 @@ class AbstractClient(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def get_jobs(self):
+        pass
+
+    @abc.abstractmethod
     def get_job_status(self, job_identifier):
         pass
 
     @abc.abstractmethod
     def get_job_file(self, job_identifier, file_path):
+        pass
+
+    @abc.abstractmethod
+    def get_job_file_list(self, job_identifier):
         pass

@@ -74,6 +74,12 @@ class TestEndToEnd:
             # Check that the jobs really did all finish in time
             assert i != 29
 
+            # Check that the jobs are returned as a list, in this case the list should contain a single job
+            jobs = session.get_jobs()
+            assert len(jobs) == 1
+            # validating the job identifier
+            assert jobs[0].get('identifier', None) == job_identifier
+
             # Retrieve the solution object
             solution = session.get_job_solution(job_identifier)
 
@@ -84,6 +90,12 @@ class TestEndToEnd:
 
             with NamedTemporaryFile() as f:
                 list(plt.values())[0].savefig(f.name)
+
+            # Retrieve file list for the job
+            file_list = session.get_job_file_list(job_identifier)
+
+            # List should contain at least the solution file
+            assert len(file_list) > 0
 
             # Terminate the session
             session.terminate()
@@ -146,6 +158,14 @@ class TestEndToEnd:
             # Check that the jobs really did all finish in time
             assert i != 29
 
+            # Check the jobs
+            jobs = session.get_jobs()
+            # checking if the number of the jobs are retrieved correctly
+            assert len(job_identifiers) == len(jobs)
+
+            for job in jobs:
+                assert job.get('identifier', None) in job_identifiers
+
             for identifier in job_identifiers:
                 # Retrieve the solution object
                 solution = session.get_job_solution(identifier)
@@ -157,6 +177,12 @@ class TestEndToEnd:
 
                 with NamedTemporaryFile() as f:
                     list(plt.values())[0].savefig(f.name)
+
+                # Retrieve file list for the job
+                file_list = session.get_job_file_list(identifier)
+
+                # List should contain at least the solution file
+                assert len(file_list) > 0
 
             # Terminate the session
             session.terminate()
