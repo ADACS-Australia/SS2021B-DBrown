@@ -1,12 +1,14 @@
-import matplotlib
-
 from tempfile import TemporaryDirectory, NamedTemporaryFile
 from time import sleep
 from uuid import UUID
 
-from finorch.sessions import LocalSession
-from finorch.utils.job_status import JobStatus
+import matplotlib
 import numpy
+import pytest
+
+from finorch.sessions import LocalSession
+from finorch.transport.exceptions import TransportGetJobSolutionException
+from finorch.utils.job_status import JobStatus
 
 
 class TestEndToEnd:
@@ -26,6 +28,7 @@ class TestEndToEnd:
         # restore the backend
         matplotlib.use(cls.BACKEND)
 
+    @pytest.mark.filterwarnings("ignore")
     def test_end_to_end_single(self):
         with TemporaryDirectory() as tmpdir:
             session = LocalSession(exec_path=tmpdir)
@@ -64,6 +67,10 @@ class TestEndToEnd:
             except ValueError:
                 assert False
 
+            # Try to get the job solution before the job has finished, should raise an exception
+            with pytest.raises(TransportGetJobSolutionException):
+                session.get_job_solution(job_identifier)
+
             # Wait for the job to complete (Max wait of 30 seconds)
             for i in range(30):
                 if session.get_job_status(job_identifier) == JobStatus.COMPLETED:
@@ -71,7 +78,7 @@ class TestEndToEnd:
 
                 sleep(1)
 
-            # Check that the jobs really did all finish in time
+            # Check that the job really did finish in time
             assert i != 29
 
             # Check that the jobs are returned as a list, in this case the list should contain a single job
@@ -97,9 +104,14 @@ class TestEndToEnd:
             # List should contain at least the solution file
             assert len(file_list) > 0
 
+            # Check that we can get the job's file list
+            f = session.get_job_file(job_identifier, 'data.pickle')
+            assert f is not None
+
             # Terminate the session
             session.terminate()
 
+    @pytest.mark.filterwarnings("ignore")
     def test_end_to_end_multi(self):
         with TemporaryDirectory() as tmpdir:
             session = LocalSession(exec_path=tmpdir)
@@ -140,6 +152,9 @@ class TestEndToEnd:
                     UUID(identifier, version=4)
                 except ValueError:
                     assert False
+
+                with pytest.raises(TransportGetJobSolutionException):
+                    session.get_job_solution(identifier)
 
                 job_identifiers.append(identifier)
 

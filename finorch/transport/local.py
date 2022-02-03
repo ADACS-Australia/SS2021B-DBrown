@@ -95,7 +95,7 @@ class LocalTransport(AbstractTransport):
         self._client_rpc.terminate()
 
     def disconnect(self):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     def get_job_file(self, job_identifier, file_path):
         status = self._client_rpc.get_job_file(job_identifier, file_path)
@@ -126,7 +126,7 @@ class LocalTransport(AbstractTransport):
             raise TransportGetJobsException(status[1])
 
     def stop_job(self, job_identifier):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     def update_job_parameters(self, job_identifier, params):
-        raise Exception("Not implemented")
+        raise NotImplementedError()

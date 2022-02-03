@@ -62,20 +62,20 @@ class AbstractClient(abc.ABC):
 
     @abc.abstractmethod
     def start_job(self, katscript):
-        pass
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def get_jobs(self):
-        pass
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def get_job_status(self, job_identifier):
-        pass
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def get_job_file(self, job_identifier, file_path):
-        pass
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def get_job_file_list(self, job_identifier):
-        pass
+        raise NotImplementedError()

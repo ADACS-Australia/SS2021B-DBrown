@@ -14,9 +14,6 @@ class AbstractSession(abc.ABC):
     def start_job(self, script):
         return self._transport.start_job(script)
 
-    def get_job(self, job_identifier):
-        return self._transport.get_job(job_identifier)
-
     def get_jobs(self):
         return self._transport.get_jobs()
 

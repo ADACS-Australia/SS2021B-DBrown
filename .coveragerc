@@ -2,3 +2,6 @@
 omit =
     # Ignore tests
     tests/*
+
+    # Ignore the job status file
+    finorch/utils/job_status.py

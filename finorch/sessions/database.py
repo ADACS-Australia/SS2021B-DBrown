@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy import create_engine
@@ -26,6 +27,8 @@ class Database:
 
         :param exec_path: The path where the job output is kept. This is where the sqlite database will be stored.
         """
+        logging.getLogger('sqlalchemy').setLevel(logging.ERROR)
+
         # Set up the sqlite database
         self.engine = create_engine(f"sqlite:///{exec_path / 'db.sqlite3'}")
 
@@ -47,6 +50,8 @@ class Database:
 
         self.session.add(job)
         self.session.commit()
+
+        return True
 
     def get_job_status(self, job_identifier):
         """
@@ -77,6 +82,8 @@ class Database:
 
         results.first().status = new_status
         self.session.commit()
+
+        return True
 
     def get_jobs(self):
         """

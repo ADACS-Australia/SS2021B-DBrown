@@ -58,6 +58,7 @@ class AbstractTransport(abc.ABC):
         :param katscript: The katscript defining the model to run
         :return: UUID representing the remote identifier for the job
         """
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def get_job_status(self, job_identifier):
@@ -69,6 +70,7 @@ class AbstractTransport(abc.ABC):
         :param job_identifier: The UUID of the job to get the status of
         :return: a JobStatus indicating the status of the job
         """
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def stop_job(self, job_identifier):
@@ -80,6 +82,7 @@ class AbstractTransport(abc.ABC):
         :param job_identifier: The UUID of the job to stop
         :return: None
         """
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def get_jobs(self):
@@ -90,6 +93,7 @@ class AbstractTransport(abc.ABC):
 
         :return: A list of dicts representing the details of the remote jobs
         """
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def update_job_parameters(self, job_identifier, params):
@@ -102,6 +106,7 @@ class AbstractTransport(abc.ABC):
         :param params: The new parameters
         :return: None
         """
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def get_job_file_list(self, job_identifier):
@@ -113,6 +118,7 @@ class AbstractTransport(abc.ABC):
         :param job_identifier: the UUID of the job to fetch the file list for
         :return: A list of JobFile objects
         """
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def get_job_file(self, job_identifier, file_path):
@@ -125,6 +131,7 @@ class AbstractTransport(abc.ABC):
         :param file_path: The path to the file to download
         :return: A bytes object representing the file that was downloaded
         """
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def terminate(self):
@@ -135,3 +142,4 @@ class AbstractTransport(abc.ABC):
 
         :return: None
         """
+        raise NotImplementedError()

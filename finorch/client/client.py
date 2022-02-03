@@ -53,6 +53,11 @@ def prepare_log_file():
     Creates the log file and sets up logging parameters
     :return: None
     """
+    # Reset any logging configuration
+    from importlib import reload
+    logging.shutdown()
+    reload(logging)
+
     # Get the log file name
     log_file_name = client_config_manager.get_log_directory() / 'client.log'
 
@@ -68,7 +73,7 @@ def prepare_log_file():
     logger.addHandler(handler)
 
 
-if __name__ == '__main__':
+def run():
     # Attempt to start the client and if there is an error print error to stdout, and the stack trace to stderr.
     try:
         prepare_log_file()
@@ -90,3 +95,7 @@ if __name__ == '__main__':
         print("error", flush=True)
         print(exc_log, flush=True)
         print("=EOF=")
+
+
+if __name__ == '__main__':
+    run()

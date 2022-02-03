@@ -5,9 +5,12 @@ import traceback
 from finorch.sessions import session_map
 from finorch.sessions.abstract_wrapper import AbstractWrapper
 
-if __name__ == '__main__':
+
+def run():
     # Attempt to start the wrapper and if there is an error print error to stdout, and the stack trace to stderr.
     try:
+        AbstractWrapper.prepare_log_file()
+
         if len(sys.argv) != 2:
             raise Exception("Incorrect number of parameters")
 
@@ -17,7 +20,6 @@ if __name__ == '__main__':
         # Get the wrapper from the provided session parameter
         session_klass = session_map[sys.argv[1]]
 
-        AbstractWrapper.prepare_log_file()
         AbstractWrapper.start_wrapper(session_klass)
     except Exception as exc:
         # An exception occurred, log the exception to the log file
@@ -36,3 +38,7 @@ if __name__ == '__main__':
         print("error", flush=True)
         print(exc_log, flush=True)
         print("=EOF=")
+
+
+if __name__ == '__main__':
+    run()
