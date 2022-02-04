@@ -7,7 +7,7 @@ from time import sleep
 
 from finorch.wrapper.wrapper import run
 from tests.unit.local.test_local_client import SCRIPT
-from tests.util import cd
+from finorch.utils.cd import cd
 
 
 def test_run():

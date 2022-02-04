@@ -5,7 +5,7 @@ import finesse
 from finorch.sessions.abstract_wrapper import AbstractWrapper
 
 
-class LocalWrapper(AbstractWrapper):
+class OzStarWrapper(AbstractWrapper):
     def run(self):
         katscript = open('script.k', 'r').read()
 

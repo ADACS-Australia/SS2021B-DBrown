@@ -1,12 +1,54 @@
 import logging
 import logging.handlers
+import os
 import sys
 import traceback
 from tempfile import NamedTemporaryFile
 
 from finorch.config.config import client_config_manager
-from finorch.sessions import session_map
+from finorch.sessions import session_map, LocalSession
 from finorch.utils.xmlrpc import XMLRPCServer
+
+
+def daemonize():  # pragma: no cover
+    """
+    do the UNIX double-fork magic, see Stevens' "Advanced
+    Programming in the UNIX Environment" for details (ISBN 0201563177)
+    http://www.erlenstar.demon.co.uk/unix/faq_2.html#SEC16
+    """
+    try:
+        pid = os.fork()
+        if pid > 0:
+            # exit first parent
+            sys.exit(0)
+    except OSError as e:
+        sys.stderr.write("fork #1 failed: %d (%s)\n" % (e.errno, e.strerror))
+        sys.exit(1)
+
+    # decouple from parent environment
+    # os.chdir("/")
+    os.setsid()
+    os.umask(0)
+
+    # do second fork
+    try:
+        pid = os.fork()
+        if pid > 0:
+            # exit from second parent
+            sys.exit(0)
+    except OSError as e:
+        sys.stderr.write("fork #2 failed: %d (%s)\n" % (e.errno, e.strerror))
+        sys.exit(1)
+
+    # redirect standard file descriptors
+    sys.stdout.flush()
+    sys.stderr.flush()
+    si = open('/dev/null', 'r')
+    so = open('/dev/null', 'ab+', 0)
+    se = open('/dev/null', 'ab+', 0)
+    os.dup2(si.fileno(), sys.stdin.fileno())
+    os.dup2(so.fileno(), sys.stdout.fileno())
+    os.dup2(se.fileno(), sys.stderr.fileno())
 
 
 def start_client():
@@ -43,6 +85,9 @@ def start_client():
         n = NamedTemporaryFile()
         sys.stdout = open(n.name, "w")
         sys.stderr = sys.stdout
+
+        if session_klass is not LocalSession:
+            daemonize()
 
         # Run the server's main loop
         server.serve_forever()

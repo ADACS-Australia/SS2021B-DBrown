@@ -10,7 +10,7 @@ from finorch.config.config import WrapperConfigManager
 from finorch.sessions.abstract_client import AbstractClient
 from finorch.sessions.abstract_session import AbstractSession
 from finorch.sessions.abstract_wrapper import AbstractWrapper
-from tests.util import cd
+from finorch.utils.cd import cd
 
 
 def test_constructor():

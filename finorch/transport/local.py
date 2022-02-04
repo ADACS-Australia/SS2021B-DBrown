@@ -27,9 +27,9 @@ class LocalTransport(AbstractTransport):
         :return: True if the client is running and accepting connections, otherwise False
         """
         if port := port or client_config_manager.get_port():
-            self.port = int(port)
+            self._port = int(port)
 
-            self._connected = test_port_open(self.port)
+            self._connected = test_port_open(self._port)
 
         return self._connected
 
@@ -65,11 +65,9 @@ class LocalTransport(AbstractTransport):
 
         # Try to parse the first line of the output from the client as the port it is running on and check the
         # connectivity.
-        self.port = str(stdout[0])
-        if not self._check_client_connectivity(self.port):
+        self._port = str(stdout[0])
+        if not self._check_client_connectivity(self._port):
             raise TransportConnectionException("Unable to connect to the port reported by the client")
-
-        return self.port
 
     def connect(self):
         # Check if the client is already running and start it with subprocess, which will manage it's own finesse
@@ -78,7 +76,7 @@ class LocalTransport(AbstractTransport):
             self._spawn_client()
 
         self._client_rpc = xmlrpc.client.ServerProxy(
-            f'http://localhost:{self.port}/rpc',
+            f'http://localhost:{self._port}/rpc',
             allow_none=True,
             use_builtin_types=True
         )
