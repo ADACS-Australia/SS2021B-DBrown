@@ -1,7 +1,7 @@
 # SS2021B-DBrown (finorch)
 
-This project is a finesse job orchestrator which facilitates running finesse jobs via an API and gather information of
-the job once it is completed. The project has been tested using python3 (3.8+).
+This project is a finesse job orchestrator which facilitates running finesse jobs via an API and gathering information of
+those jobs once it is completed. The project has been tested using python3 (3.8+).
 
 
 ## Project setup (development)
@@ -13,16 +13,12 @@ Development Dependencies:-
 
 ### Steps
 * Clone the project from the repo (`git clone ...`)
-* If using phabricator/arcanist, check out the arcanist utility library such that the `arcutils` directory is in the project root
-   * `git clone https://github.com/gravitationalwavedc/gw_arcanist_library.git arcutils`
 * Run `poetry install` to install the project dependencies to your environment.
 
 ***
-If using arcanist, make sure to activate the poetry shell before running arcanist commands. `poetry shell`
-
 ## Usage
 
-This project aims to cater running finesse jobs in different environments. For example, one should be able to run a 
+This project aims to allow running finesse jobs in different environments. For example, one should be able to run a 
 finesse job locally or in a cluster remotely.
 
 ### Installing `finorch` remotely
@@ -47,7 +43,7 @@ virtualenv venv
 pip install finorch
 ```
 
-We need to create an envrionment file to load up the dependencies in order to run jobs using the API.
+We need to create an environment file to load up the dependencies in order to run jobs using the API.
 
 In this case, a typical env file would like following:
 
@@ -74,9 +70,9 @@ pip install finorch
 
 ### Creating Session
 
-### OzSTAR Session (for running jobs in OzSTAR)
+#### OzSTAR Session (for running jobs in OzSTAR)
 
-Creating an Ozstar session requires the execution path location, user credentials to login to OzSTAR and 
+Creating a Ozstar session requires the execution path location, user credentials to login to OzSTAR, the path to the python interpreter of the virtual environment and path to the environment file.
 
 ```python
 from finorch.sessions import OzStarSession
@@ -84,15 +80,28 @@ from finorch.sessions import OzStarSession
 session = OzStarSession(
     exec_path="<path/to/execute/jobs>",  # path to execute jobs ex: /home/<user>/finorch/jobs/
     username='<user>', # username to login to OzSTAR
-    password='<*******>', # password to login to OzSTAR
+    password='<*******>', # password to login to OzSTAR (Optional)
     python_path="<python/path>", # python path for the env in OzSTAR ex: /home/<user>/finorch/venv/bin/python
     env_file='<path/to/env/file>', # environment file to load necessary dependencies ex: /home/<user>/env.sh
 )
 ```
 
+#### Configure SSH keys
+
+It is possible to configure SSH keys to log in to sessions that use the SSH Transport such as OzSTAR. This avoids having to use a password when creating the session. To configure the keys there are two helpers:-
+```shell
+# To configure a key for a session
+# $ set_ssh_key <session name> <private key file>
+set_ssh_key ozstar ~/keys/my_ozstar_key.key
+
+# To remove a key from a session
+# $ remove_ssh_key <session name>
+remove_ssh_key ozstar
+```
+
 #### Local Session (for running jobs locally)
 
-Creating a local session requires an execution path location, it is the directory where finesse jobs will be executed.
+Creating a local session requires an execution path location, which is the directory where finesse jobs will be executed.
 ```python
 from finorch.sessions import LocalSession
 
@@ -153,19 +162,10 @@ The following table lists the all the available status and their corresponding n
 
 STATUS | # 
 --- | --- 
-DRAFT | 0 
 PENDING | 10
-SUBMITTING | 20
-SUBMITTED | 30
 QUEUED | 40
 RUNNING | 50
-CANCELLING | 60
 CANCELLED | 70
-DELETING | 80
-DELETED | 90
-ERROR | 400
-WALL_TIME_EXCEEDED | 401
-OUT_OF_MEMORY | 402
 COMPLETED | 500
 
 To get a list of job files, we can do:

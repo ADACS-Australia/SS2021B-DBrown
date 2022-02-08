@@ -1,16 +1,16 @@
 [tool.poetry]
 name = "finorch"
-version = "0.1.0"
-description = ""
-authors = ["Lewis Lakerink <llakerink@swin.edu.au>"]
+version = "0.1.2"
+description = "Finesse version 3 job orchestrator and manager. This package can be used to run parallel jobs on various remote platforms, as well as locally."
+authors = ["Lewis Lakerink <llakerink@swin.edu.au>", "Shibli Saleheen <ssaleheen@swin.edu.au>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-finesse = {git = "https://git.ligo.org/finesse/finesse3.git", rev = "develop"}
+python = "^3.8"
 appdirs = "^1.4.4"
 exc = "^0.92"
 SQLAlchemy = "^1.4.29"
 paramiko = "^2.9.2"
+finesse = "^3.0a2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
@@ -22,3 +22,7 @@ flake8 = "^4.0.1"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+set_ssh_key = 'scripts.finorch_key_manager:set_ssh_key'
+remove_ssh_key = 'scripts.finorch_key_manager:remove_ssh_key'

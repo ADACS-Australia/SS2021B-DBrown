@@ -8,6 +8,7 @@ class LocalSession(AbstractSession):
     callsign = "local"
     client_klass = LocalClient
     wrapper_klass = LocalWrapper
+    transport_klass = LocalTransport
 
     def __init__(self, exec_path=None):
         """
@@ -18,7 +19,7 @@ class LocalSession(AbstractSession):
         """
         super().__init__()
 
-        self._transport = LocalTransport(self, exec_path)
+        self._transport = LocalSession.transport_klass(self, exec_path)
         self._transport.connect()
 
     @property

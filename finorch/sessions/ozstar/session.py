@@ -11,6 +11,7 @@ class OzStarSession(AbstractSession):
     callsign = "ozstar"
     client_klass = OzStarClient
     wrapper_klass = OzStarWrapper
+    transport_klass = SshTransport
 
     def __init__(self, exec_path, username, python_path, env_file=None, *args, **kwargs):
         """
@@ -21,7 +22,7 @@ class OzStarSession(AbstractSession):
         """
         super().__init__()
 
-        self._transport = SshTransport(
+        self._transport = OzStarSession.transport_klass(
             self,
             exec_path,
             username=username,

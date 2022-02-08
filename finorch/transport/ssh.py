@@ -1,4 +1,6 @@
 import logging
+from io import StringIO
+
 import select
 import xmlrpc.client
 from socketserver import BaseRequestHandler, ThreadingTCPServer
@@ -7,6 +9,7 @@ from time import sleep
 
 import paramiko
 
+from finorch.config.config import api_config_manager
 from finorch.transport.abstract_transport import AbstractTransport
 from finorch.transport.exceptions import TransportConnectionException, TransportTerminateException, \
     TransportGetJobFileException, TransportGetJobFileListException, TransportGetJobStatusException, \
@@ -17,12 +20,13 @@ class SshTransport(AbstractTransport):
     def __init__(self, session, exec_path, *args, **kwargs):
         super().__init__(session, exec_path, *args, **kwargs)
 
+        self._ssh_client = None
         self._ssh_transport = None
         self._ssh_session = None
 
         self._host = kwargs['host']
         self._username = kwargs['username']
-        self._ssh_password = kwargs['password']
+        self._ssh_password = kwargs.get('password', None)
 
         self._python_path = kwargs['python_path']
         self._env_file = kwargs.get('env_file', None)
@@ -35,16 +39,42 @@ class SshTransport(AbstractTransport):
         self._remote_port = kwargs['remote_port']
         self._remote_port = int(self._remote_port) if self._remote_port else None
 
-        # Set up a connection to the remote server
-        self._ssh_transport = paramiko.Transport((self._host, self._ssh_port))
+        self._ssh_client = paramiko.SSHClient()
+        self._ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-        # Connect to the remote server
-        self._ssh_transport.connect(
-            hostkey=None,
-            username=self._username,
-            password=self._ssh_password,
-            pkey=None
-        )
+        # If no ssh password is provided, then try to use the key from the api settings
+        if not self._ssh_password:
+            # Get the configuration for the specified session
+            section = api_config_manager.get_section(self._callsign)
+            if not section:
+                raise TransportConnectionException("No password provided, and no key set")
+
+            # Check if it has a key or not
+            key = section.get('key', None)
+            if not key:
+                raise TransportConnectionException("No password provided, and no key set")
+
+            skey = StringIO(key)
+            pkey = paramiko.RSAKey.from_private_key(skey)
+
+            # Set up a connection to the remote server using username and key
+            self._ssh_client.connect(
+                hostname=self._host,
+                port=self._ssh_port,
+                username=self._username,
+                pkey=pkey,
+            )
+        else:
+            # Set up a connection to the remote server using username and password
+            self._ssh_client.connect(
+                hostname=self._host,
+                port=self._ssh_port,
+                username=self._username,
+                password=self._ssh_password
+            )
+
+        # Get the transport used by the client
+        self._ssh_transport = self._ssh_client.get_transport()
 
         # First try to reconnect the previous port if it's set
         if self._remote_port:
