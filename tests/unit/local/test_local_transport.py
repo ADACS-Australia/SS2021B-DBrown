@@ -86,10 +86,3 @@ def test_stop_job():
 
     with pytest.raises(NotImplementedError):
         transport.stop_job(None)
-
-
-def test_update_job_parameters():
-    transport = LocalTransport('a', 'b')
-
-    with pytest.raises(NotImplementedError):
-        transport.update_job_parameters(None, None)

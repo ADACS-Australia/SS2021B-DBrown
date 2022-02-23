@@ -94,7 +94,4 @@ def test_stubs():
         transport.stop_job(None)
 
     with pytest.raises(NotImplementedError):
-        transport.update_job_parameters(None, None)
-
-    with pytest.raises(NotImplementedError):
         transport.terminate()

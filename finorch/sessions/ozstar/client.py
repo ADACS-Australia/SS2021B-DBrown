@@ -70,20 +70,32 @@ class OzStarClient(AbstractClient):
 
             # Get the slurm id from the output
             try:
-                int(stdout.strip().split()[-1])
+                return int(stdout.strip().split()[-1])
             except Exception:
                 raise TransportStartJobException("Unable to submit slurm job")
 
+    def _cancel_slurm_job(self, job_id):
+        logging.info("Trying to terminate job {}...".format(job_id))
+
+        # Construct the command
+        command = "scancel {}".format(job_id)
+
+        # Cancel the job
+        stdout = subprocess.check_output(command, shell=True)
+
+        # todo: Handle errors
+        # Get the output
+        logging.info("Command `{}` returned `{}`".format(command, stdout))
+
     def start_job(self, katscript):
         job_identifier = str(uuid.uuid4())
-
-        self.db.add_job(job_identifier)
 
         logging.info("Starting job with the following script")
         logging.info(katscript)
         logging.info(job_identifier)
 
-        self._submit_slurm_job(job_identifier, katscript)
+        slurm_id = self._submit_slurm_job(job_identifier, katscript)
+        self.db.add_job(job_identifier, slurm_id)
 
         return job_identifier
 
@@ -140,3 +152,12 @@ class OzStarClient(AbstractClient):
             return file_list
 
         return None, f"Unable to retrieve file list for the job identifier {job_identifier}"
+
+    def stop_job(self, job_identifier):
+        # If the current job status is less than running, then cancel the job
+        if self.get_job_status(job_identifier) < JobStatus.RUNNING:
+            # Tell slurm to cancel the job
+            self._cancel_slurm_job(self.db.get_job_batch_id(job_identifier))
+
+            # Mark the job as cancelled
+            self.db.update_job_status(job_identifier, JobStatus.CANCELLED)

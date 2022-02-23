@@ -125,6 +125,3 @@ class LocalTransport(AbstractTransport):
 
     def stop_job(self, job_identifier):
         raise NotImplementedError()
-
-    def update_job_parameters(self, job_identifier, params):
-        raise NotImplementedError()

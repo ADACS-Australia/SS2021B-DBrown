@@ -204,10 +204,7 @@ class SshTransport(AbstractTransport):
         return self._client_rpc.start_job(katscript)
 
     def stop_job(self, job_identifier):
-        raise NotImplementedError()
-
-    def update_job_parameters(self, job_identifier, params):
-        raise NotImplementedError()
+        return self._client_rpc.stop_job(job_identifier)
 
     def terminate(self):
         print(self._connected)

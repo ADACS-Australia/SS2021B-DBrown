@@ -96,19 +96,6 @@ class AbstractTransport(abc.ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def update_job_parameters(self, job_identifier, params):
-        """
-        Updates the parameters for the job specified by the specified job identifier
-
-        Should raise a TransportUpdateJobParametersException in the event of a problem
-
-        :param job_identifier: The UUID of the job to update the parameters of
-        :param params: The new parameters
-        :return: None
-        """
-        raise NotImplementedError()
-
-    @abc.abstractmethod
     def get_job_file_list(self, job_identifier):
         """
         Retrieves the file list for the specified job identifier

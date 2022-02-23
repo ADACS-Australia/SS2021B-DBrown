@@ -12,6 +12,9 @@ class TestClient(AbstractClient):
     def start_job(self, a):
         super().start_job(a)
 
+    def stop_job(self, a):
+        super().start_job(a)
+
     def get_jobs(self):
         super().get_jobs()
 

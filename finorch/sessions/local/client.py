@@ -109,3 +109,6 @@ class LocalClient(AbstractClient):
             return file_list
 
         return None, f"Unable to retrieve file list for the job identifier {job_identifier}"
+
+    def stop_job(self, job_identifier):
+        raise NotImplementedError()

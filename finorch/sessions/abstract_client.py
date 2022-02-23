@@ -65,6 +65,10 @@ class AbstractClient(abc.ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
+    def stop_job(self, job_identifier):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
     def get_jobs(self):
         raise NotImplementedError()
 

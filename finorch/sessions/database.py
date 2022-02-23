@@ -15,6 +15,7 @@ class Job(Base):
     __tablename__ = 'job'
 
     id = Column(Integer, primary_key=True)
+    batch_id = Column(Integer, unique=True, nullable=True)
     identifier = Column(String(40), unique=True)
     start_time = Column(DateTime, default=datetime.datetime.now, nullable=False)
     status = Column(Integer, default=JobStatus.PENDING)
@@ -37,7 +38,7 @@ class Database:
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
 
-    def add_job(self, job_identifier):
+    def add_job(self, job_identifier, batch_id=None):
         """
         Inserts a new job with the specified job identifier
 
@@ -45,7 +46,8 @@ class Database:
         :return: None
         """
         job = Job(
-            identifier=job_identifier
+            identifier=job_identifier,
+            batch_id=batch_id
         )
 
         self.session.add(job)
@@ -94,3 +96,17 @@ class Database:
         data = [r._asdict() for r in self.session.query(Job.id, Job.identifier, Job.start_time, Job.status).all()]
 
         return data
+
+    def get_job_batch_id(self, job_identifier):
+        """
+        Gets the batch id of the specified job
+
+        :param job_identifier: The identifier of the job
+        :return: The batch_id of the job or None
+        """
+        results = self.session.query(Job).filter(Job.identifier == job_identifier)
+
+        if results.count() != 1:
+            return None, f"Job with with identifier {job_identifier} not found"
+
+        return results.first().batch_id
