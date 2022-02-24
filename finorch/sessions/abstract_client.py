@@ -31,7 +31,7 @@ class AbstractClient(abc.ABC):
     def set_exec_path(self, path):
         if path:
             # Path is already defined, so set up the path and make sure the directory is created
-            self._exec_path = Path(path)
+            self._exec_path = Path(path).absolute()
             os.makedirs(self._exec_path, exist_ok=True)
         else:
             # If the path is not specified, create a temporary directory and mark it for cleanup when the client exits
