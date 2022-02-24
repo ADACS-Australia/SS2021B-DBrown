@@ -37,6 +37,7 @@ class AbstractSession(abc.ABC):
 
         with NamedTemporaryFile() as f:
             f.write(result)
+            f.flush()
             return finesse.load(f.name, 'pickle')
 
     def terminate(self):
