@@ -253,6 +253,14 @@ python-versions = ">=3.7"
 numpy = ">=1.14.5"
 
 [[package]]
+name = "htcondor"
+version = "9.5.0"
+description = "HTCondor Python bindings"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "kiwisolver"
 version = "1.3.2"
 description = "A fast implementation of the Cassowary constraint solver"
@@ -628,7 +636,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "5156ccd0852093965868e087bb12358b39d05a803e02864839b247e3d2d24bf4"
+content-hash = "021b8bf95950281ba0c13315a88aa4d0f561d01b0e87d66b09fb9edf72b561d5"
 
 [metadata.files]
 appdirs = [
@@ -883,6 +891,13 @@ h5py = [
     {file = "h5py-3.6.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:954c5c39a09b5302f69f752c3bbf165d368a65c8d200f7d5655e0fa6368a75e6"},
     {file = "h5py-3.6.0-cp39-cp39-win_amd64.whl", hash = "sha256:9fd8a14236fdd092a20c0bdf25c3aba3777718d266fabb0fdded4fcf252d1630"},
     {file = "h5py-3.6.0.tar.gz", hash = "sha256:8752d2814a92aba4e2b2a5922d2782d0029102d99caaf3c201a566bc0b40db29"},
+]
+htcondor = [
+    {file = "htcondor-9.5.0-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:91450b5fd1663a38d54b27013833f6a0f98ae917d188fedfaf486e5f098b2eaa"},
+    {file = "htcondor-9.5.0-cp36-cp36m-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:77233404cb31ae88c4f1fc57a607eba2572b987d3a5497fae0116c3dbd0af9b5"},
+    {file = "htcondor-9.5.0-cp37-cp37m-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:0c3cf3f08b1c48d71107528efe70b683a74752519993d8ea722b57a00ac62cb3"},
+    {file = "htcondor-9.5.0-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:f8bd785217f9577d7f6ff29a77d8d0e1c155cc54e8d3c1306fe6c7a635f5d204"},
+    {file = "htcondor-9.5.0-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:410fbaac9f03c2ea45f6d1f21816a8acb910379f46c87933f0a942e1252f806e"},
 ]
 kiwisolver = [
     {file = "kiwisolver-1.3.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:1d819553730d3c2724582124aee8a03c846ec4362ded1034c16fb3ef309264e6"},

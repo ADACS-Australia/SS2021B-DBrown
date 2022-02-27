@@ -54,7 +54,21 @@ module load python/3.8.5
 module load suitesparse/5.6.0-metis-5.1.0
 ```
 
-### Installing `finorch` locally
+#### CalTech CIT
+The following describes how to set up the remote environment for CalTech CIT cluster.
+```shell
+# Once you are logged in to CalTech (ldas-grid.ligo.caltech.edu)
+
+# Set up environment with conda
+conda create --prefix ./venv
+conda activate ./venv
+conda install python=3.9
+
+# Install finorch
+pip install finorch
+```
+
+#### Installing `finorch` locally
 
 To run a finesse job via the API (locally or remotely), we need to install the package locally. Again we can create
 an environment and install `finorch` locally as follows:
@@ -83,6 +97,20 @@ session = OzStarSession(
     password='<*******>', # password to login to OzSTAR (Optional)
     python_path="<python/path>", # python path for the env in OzSTAR ex: /home/<user>/finorch/venv/bin/python
     env_file='<path/to/env/file>', # environment file to load necessary dependencies ex: /home/<user>/env.sh
+)
+```
+
+#### CalTech Session (for running jobs on CIT)
+Creating a CIT session requires execution path location, user credentials to login to CIT, and the path to the environment file.
+
+```python
+from finorch.sessions import CitSession
+
+session = CitSession(
+    exec_path="<path/to/execute/jobs>",  # path to execute jobs ex: /home/<user>/finorch/jobs/
+    username='<user>', # username to login to CIT
+    password='<*******>', # password to login to CIT (Optional)
+    python_path="<python/path>" # python path in the conda env on CIT ex: /home/<user>/finorch/venv/bin/python
 )
 ```
 

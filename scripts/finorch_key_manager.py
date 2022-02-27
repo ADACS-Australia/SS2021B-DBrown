@@ -47,7 +47,7 @@ def set_ssh_key():
 
     key = open(key_file, 'r').read()
 
-    api_config_manager.set('ozstar', 'key', key)
+    api_config_manager.set(session, 'key', key)
 
     print(f"SSH key for session {session} updated successfully.")
 
