@@ -1,16 +1,16 @@
 import logging
 
 from finorch.config.config import api_config_manager
-from finorch.sessions.cit.client import CitClient
+from finorch.sessions.cit.client import CITClient
 from finorch.sessions.abstract_session import AbstractSession
-from finorch.sessions.cit.wrapper import CitWrapper
+from finorch.sessions.cit.wrapper import CITWrapper
 from finorch.transport.ssh import SshTransport
 
 
-class CitSession(AbstractSession):
+class CITSession(AbstractSession):
     callsign = "cit"
-    client_klass = CitClient
-    wrapper_klass = CitWrapper
+    client_klass = CITClient
+    wrapper_klass = CITWrapper
     transport_klass = SshTransport
 
     def __init__(self, exec_path, username, python_path, env_file=None, *args, **kwargs):
@@ -22,7 +22,7 @@ class CitSession(AbstractSession):
         """
         super().__init__()
 
-        self._transport = CitSession.transport_klass(
+        self._transport = CITSession.transport_klass(
             self,
             exec_path,
             username=username,

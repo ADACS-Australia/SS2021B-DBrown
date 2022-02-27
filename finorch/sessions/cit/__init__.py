@@ -1,3 +1,3 @@
-from finorch.sessions.cit.session import CitSession
+from finorch.sessions.cit.session import CITSession
 
-Session = CitSession
+Session = CITSession

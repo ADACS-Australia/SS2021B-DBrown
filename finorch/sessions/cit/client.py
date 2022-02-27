@@ -15,7 +15,7 @@ SUBMIT_SCRIPT = """#!/bin/bash
 """
 
 
-class CitClient(AbstractClient):
+class CITClient(AbstractClient):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

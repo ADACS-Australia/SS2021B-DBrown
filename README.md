@@ -104,13 +104,13 @@ session = OzStarSession(
 Creating a CIT session requires execution path location, user credentials to login to CIT, and the path to the environment file.
 
 ```python
-from finorch.sessions import CitSession
+from finorch.sessions import CITSession
 
-session = CitSession(
+session = CITSession(
     exec_path="<path/to/execute/jobs>",  # path to execute jobs ex: /home/<user>/finorch/jobs/
-    username='<user>', # username to login to CIT
-    password='<*******>', # password to login to CIT (Optional)
-    python_path="<python/path>" # python path in the conda env on CIT ex: /home/<user>/finorch/venv/bin/python
+    username='<user>',  # username to login to CIT
+    password='<*******>',  # password to login to CIT (Optional)
+    python_path="<python/path>"  # python path in the conda env on CIT ex: /home/<user>/finorch/venv/bin/python
 )
 ```
 
