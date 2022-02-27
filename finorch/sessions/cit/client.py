@@ -4,8 +4,6 @@ import sys
 import uuid
 from pathlib import Path
 
-import htcondor
-
 from finorch.sessions.abstract_client import AbstractClient
 from finorch.transport.exceptions import TransportStartJobException
 from finorch.utils.cd import cd
@@ -54,6 +52,7 @@ class CitClient(AbstractClient):
             for attempt in range(1, 6):
                 try:
                     with cd(exec_dir):
+                        import htcondor
                         submit = htcondor.Submit({
                             "universe": "scheduler",
                             "executable": "/bin/bash",
@@ -83,6 +82,7 @@ class CitClient(AbstractClient):
     def _cancel_condor_job(self, job_id):
         logging.info("Trying to terminate job {}...".format(job_id))
 
+        import htcondor
         htcondor.Schedd().act(htcondor.JobAction.Hold, f"ClusterId == {job_id} && ProcID <= 1")
 
     def start_job(self, katscript):

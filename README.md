@@ -64,8 +64,8 @@ conda create --prefix ./venv
 conda activate ./venv
 conda install python=3.9
 
-# Install finorch
-pip install finorch
+# Install finorch - [htcondor] is very important here
+pip install finorch[htcondor]
 ```
 
 #### Installing `finorch` locally
