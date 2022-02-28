@@ -42,3 +42,6 @@ class AbstractSession(abc.ABC):
 
     def terminate(self):
         self._transport.terminate()
+
+    def disconnect(self):
+        self._transport.disconnect()

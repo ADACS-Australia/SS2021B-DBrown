@@ -1,5 +1,4 @@
 import logging
-import multiprocessing.pool
 import os
 import sys
 import uuid
@@ -34,7 +33,8 @@ class LocalClient(AbstractClient):
         super().__init__(*args, **kwargs)
 
         # Will create a pool with os.cpu_count() processes
-        self._pool = multiprocessing.pool.Pool()
+        from concurrent.futures import ProcessPoolExecutor
+        self._executor = ProcessPoolExecutor()
 
     def start_job(self, katscript):
         job_identifier = str(uuid.uuid4())
@@ -45,13 +45,12 @@ class LocalClient(AbstractClient):
         logging.info(katscript)
         logging.info(job_identifier)
 
-        self._pool.apply_async(
-            _start_wrapper, (
-                self._exec_path,
-                job_identifier,
-                self._session_klass,
-                katscript
-            )
+        self._executor.submit(
+            _start_wrapper,
+            self._exec_path,
+            job_identifier,
+            self._session_klass,
+            katscript
         )
 
         return job_identifier

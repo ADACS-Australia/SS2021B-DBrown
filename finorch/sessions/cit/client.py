@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 import uuid
+import warnings
 from pathlib import Path
 
 from finorch.sessions.abstract_client import AbstractClient
@@ -52,6 +53,7 @@ class CITClient(AbstractClient):
             for attempt in range(1, 6):
                 try:
                     with cd(exec_dir):
+                        warnings.filterwarnings("ignore")
                         import htcondor
                         submit = htcondor.Submit({
                             "universe": "scheduler",
@@ -82,6 +84,7 @@ class CITClient(AbstractClient):
     def _cancel_condor_job(self, job_id):
         logging.info("Trying to terminate job {}...".format(job_id))
 
+        warnings.filterwarnings("ignore")
         import htcondor
         htcondor.Schedd().act(htcondor.JobAction.Hold, f"ClusterId == {job_id} && ProcID <= 1")
 

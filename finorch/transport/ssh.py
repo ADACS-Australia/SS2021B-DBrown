@@ -35,6 +35,9 @@ class SshTransport(AbstractTransport):
 
         self._remote_port = None
 
+        from finorch.sessions import SshSession
+        self._is_generic = isinstance(self._session, SshSession)
+
     def connect(self, *args, **kwargs):
         self._remote_port = kwargs['remote_port']
         self._remote_port = int(self._remote_port) if self._remote_port else None
@@ -50,7 +53,7 @@ class SshTransport(AbstractTransport):
                 raise TransportConnectionException("No password provided, and no key set")
 
             # Check if it has a key or not
-            key = section.get('key', None)
+            key = section.get('key' if not self._is_generic else self._host, None)
             if not key:
                 raise TransportConnectionException("No password provided, and no key set")
 
@@ -115,22 +118,22 @@ class SshTransport(AbstractTransport):
         session.exec_command(command)
 
         # Wait for the connection to close
-        stdout, stderr = b'', b''
+        stdout, stderr = '', ''
         while True:  # monitoring process
             # Reading from output streams
             while session.recv_ready():
-                stdout += session.recv(1000)
+                stdout += session.recv(1000).decode('utf-8')
             while session.recv_stderr_ready():
-                stderr += session.recv_stderr(1000)
+                stderr += session.recv_stderr(1000).decode('utf-8')
             if session.exit_status_ready():  # If completed
                 break
             sleep(0.1)
 
-        stdout = stdout.decode('utf-8')
-        stderr = stderr.decode('utf-8')
+            if stdout.splitlines() and stdout.splitlines()[-1] == "=EOF=":
+                break
 
         # Check that the command finished successfully
-        if session.exit_status:
+        if session.exit_status_ready() and session.exit_status:
             raise TransportConnectionException(
                 f"Unable to start remote server.\nstdout:\n{stdout}\n\nstderr:\n{stderr}\n"
             )
@@ -170,7 +173,11 @@ class SshTransport(AbstractTransport):
         return self._remote_port
 
     def disconnect(self):
-        raise NotImplementedError()
+        super().disconnect()
+
+        self._connection.shutdown()
+        self._ssh_client.close()
+        self._connected = False
 
     def get_job_file(self, job_identifier, file_path):
         status = self._client_rpc.get_job_file(job_identifier, file_path)
@@ -207,7 +214,6 @@ class SshTransport(AbstractTransport):
         return self._client_rpc.stop_job(job_identifier)
 
     def terminate(self):
-        print(self._connected)
         if not self._connected:
             raise TransportTerminateException("Client is not connected")
 

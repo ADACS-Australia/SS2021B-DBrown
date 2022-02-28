@@ -18,8 +18,7 @@ Development Dependencies:-
 ***
 ## Usage
 
-This project aims to allow running finesse jobs in different environments. For example, one should be able to run a 
-finesse job locally or in a cluster remotely.
+This project aims to allow running finesse jobs in different environments. For example, one should be able to run a finesse job locally or in a cluster remotely.
 
 ### Installing `finorch` remotely
 
@@ -68,7 +67,7 @@ conda install python=3.9
 pip install finorch[htcondor]
 ```
 
-#### Installing `finorch` locally
+#### Installing `finorch` locally (This also applies to remote SSH hosts)
 
 To run a finesse job via the API (locally or remotely), we need to install the package locally. Again we can create
 an environment and install `finorch` locally as follows:
@@ -81,6 +80,8 @@ virtualenv venv
 # installing the finorch package
 pip install finorch
 ```
+
+
 
 ### Creating Session
 
@@ -101,7 +102,7 @@ session = OzStarSession(
 ```
 
 #### CalTech Session (for running jobs on CIT)
-Creating a CIT session requires execution path location, user credentials to login to CIT, and the path to the environment file.
+Creating a CIT session requires execution path location, user credentials to login to CIT, and the path to the python interpreter where finorch is installed remotely.
 
 ```python
 from finorch.sessions import CITSession
@@ -114,18 +115,55 @@ session = CITSession(
 )
 ```
 
+#### Generic SSH Session (Running jobs on a remote Linux machine via SSH)
+Creating a generic SSH session requires execution path location, user credentials to login to SSH, and the path to the python interpreter where finorch is installed remotely.
+
+```python
+from finorch.sessions import SshSession
+
+session = SshSession(
+    exec_path="<path/to/execute/jobs>",  # path to execute jobs ex: /home/<user>/finorch/jobs/
+    host=<host>, # remote host name or IP address
+    username='<user>',  # username to login to the remote host
+    password='<*******>',  # password to login to the remote host (Optional)
+    python_path="<python/path>"  # python path in the conda env on CIT ex: /home/<user>/finorch/venv/bin/python
+)
+```
+
+
+
 #### Configure SSH keys
 
 It is possible to configure SSH keys to log in to sessions that use the SSH Transport such as OzSTAR. This avoids having to use a password when creating the session. To configure the keys there are two helpers:-
 ```shell
-# To configure a key for a session
+# To configure a key for `cit` or `ozstar` session
 # $ set_ssh_key <session name> <private key file>
 set_ssh_key ozstar ~/keys/my_ozstar_key.key
 
-# To remove a key from a session
+# To remove a key for `cit` or `ozstar` session
 # $ remove_ssh_key <session name>
 remove_ssh_key ozstar
+
+# To configure a key for generic SSH session
+# $ set_ssh_key ssh <host name> <private key file>
+set_ssh_key ssh farnarkle1.hpc.swin.edu.au ~/keys/my_ozstar_key.key
+
+# To remove a key for generic SSH session
+# $ remove_ssh_key ssh <host name>
+remove_ssh_key ssh farnarkle1.hpc.swin.edu.au
 ```
+
+
+
+**A note about session name mapping**
+
+```
+OzStarSession: ozstar
+CITSession: cit
+SshSession: ssh
+```
+
+
 
 #### Local Session (for running jobs locally)
 

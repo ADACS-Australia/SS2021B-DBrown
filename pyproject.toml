@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "finorch"
-version = "0.1.10"
+version = "0.1.11"
 description = "Finesse version 3 job orchestrator and manager. This package can be used to run parallel jobs on various remote platforms, as well as locally."
 authors = ["Lewis Lakerink <llakerink@swin.edu.au>", "Shibli Saleheen <ssaleheen@swin.edu.au>"]
 

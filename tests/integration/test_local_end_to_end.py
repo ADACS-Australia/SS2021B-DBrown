@@ -23,6 +23,9 @@ class TestEndToEnd:
         # set to a non-interactive backend, otherwise we need to manually close the figures to continue
         matplotlib.use('Agg')
 
+        # This sleep gives previous python processes time to clean up and terminate
+        sleep(0.5)
+
     @classmethod
     def teardown(cls):
         # restore the backend

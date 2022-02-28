@@ -1,5 +1,4 @@
 import abc
-import atexit
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -37,6 +36,8 @@ class AbstractClient(abc.ABC):
             # If the path is not specified, create a temporary directory and mark it for cleanup when the client exits
             tmpdir = TemporaryDirectory()
             self._exec_path = Path(tmpdir.name)
+
+            import atexit
             atexit.register(lambda: tmpdir.cleanup())
 
         self._db = Database(self._exec_path)
