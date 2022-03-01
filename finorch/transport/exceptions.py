@@ -28,12 +28,6 @@ class TransportStopJobException(Exception):
     """
 
 
-class TransportGetJobsException(Exception):
-    """
-    Raised when a problem arises while retrieving remote job information using a transport
-    """
-
-
 class TransportUpdateJobParametersException(Exception):
     """
     Raised when a problem arises while updating parameters of a remote job using a transport

@@ -65,6 +65,9 @@ class LocalClient(AbstractClient):
     def get_job_status(self, job_identifier):
         status = self.db.get_job_status(job_identifier)
 
+        if type(status) is tuple:
+            return status
+
         # If the job status is less than or equal to RUNNING, then we need to derive the current job status and update
         # the job status accordingly.
         new_status = status

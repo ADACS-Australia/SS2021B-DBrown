@@ -87,7 +87,7 @@ def start_client():
         sys.stderr = sys.stdout
 
         if session_klass is not LocalSession:
-            daemonize()
+            daemonize()  # pragma: no cover because testing linux daemonize is almost impossible
 
         # Run the server's main loop
         server.serve_forever()

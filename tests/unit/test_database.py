@@ -46,3 +46,19 @@ def test_get_jobs():
         assert jobs[0]['status'] is JobStatus.RUNNING
         assert 'id' in jobs[0]
         assert 'start_time' in jobs[0]
+
+
+def test_get_job_batch_id():
+    with TemporaryDirectory() as tmpdir:
+        db = Database(Path(tmpdir))
+        identifier = str(uuid.uuid4())
+        db.add_job(identifier)
+        assert db.get_job_batch_id(identifier) is None
+
+        identifier = str(uuid.uuid4())
+        db.add_job(identifier, batch_id=1234)
+        assert db.get_job_batch_id(identifier) == 1234
+
+        test_uuid = str(uuid.uuid4())
+        assert db.get_job_batch_id(test_uuid) == \
+               (None, f"Job with with identifier {test_uuid} not found")

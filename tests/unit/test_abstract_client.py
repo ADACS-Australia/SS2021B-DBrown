@@ -13,7 +13,7 @@ class TestClient(AbstractClient):
         super().start_job(a)
 
     def stop_job(self, a):
-        super().start_job(a)
+        super().stop_job(a)
 
     def get_jobs(self):
         super().get_jobs()
@@ -102,6 +102,9 @@ def test_stubs():
 
     with pytest.raises(NotImplementedError):
         client.start_job(None)
+
+    with pytest.raises(NotImplementedError):
+        client.stop_job(None)
 
     with pytest.raises(NotImplementedError):
         client.get_jobs()

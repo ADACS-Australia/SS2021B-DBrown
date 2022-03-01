@@ -57,7 +57,7 @@ class AbstractWrapper(abc.ABC):
 
         # Wait for the XMLRPC server to start
         while not test_port_open(port):
-            sleep(0.1)
+            sleep(0.1)  # pragma: no cover
 
         # Touch the 'started' file
         pathlib.Path('started').touch()

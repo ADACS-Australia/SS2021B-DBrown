@@ -154,8 +154,8 @@ class OzStarClient(AbstractClient):
         return None, f"Unable to retrieve file list for the job identifier {job_identifier}"
 
     def stop_job(self, job_identifier):
-        # If the current job status is less than running, then cancel the job
-        if self.get_job_status(job_identifier) < JobStatus.RUNNING:
+        # If the current job status is less than or equal to running, then cancel the job
+        if self.get_job_status(job_identifier) <= JobStatus.RUNNING:
             # Tell slurm to cancel the job
             self._cancel_slurm_job(self.db.get_job_batch_id(job_identifier))
 

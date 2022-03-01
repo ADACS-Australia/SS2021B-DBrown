@@ -12,15 +12,16 @@ import paramiko
 from finorch.config.config import api_config_manager
 from finorch.transport.abstract_transport import AbstractTransport
 from finorch.transport.exceptions import TransportConnectionException, TransportTerminateException, \
-    TransportGetJobFileException, TransportGetJobFileListException, TransportGetJobStatusException, \
-    TransportGetJobsException
+    TransportGetJobFileException, TransportGetJobFileListException, TransportGetJobStatusException
 
 
 class SshTransport(AbstractTransport):
     def __init__(self, session, exec_path, *args, **kwargs):
         super().__init__(session, exec_path, *args, **kwargs)
 
-        self._ssh_client = None
+        # exec path must exist for ssh session
+        assert exec_path
+
         self._ssh_transport = None
         self._ssh_session = None
 
@@ -38,12 +39,12 @@ class SshTransport(AbstractTransport):
         from finorch.sessions import SshSession
         self._is_generic = isinstance(self._session, SshSession)
 
+        self._ssh_client = paramiko.SSHClient()
+        self._ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
     def connect(self, *args, **kwargs):
         self._remote_port = kwargs['remote_port']
         self._remote_port = int(self._remote_port) if self._remote_port else None
-
-        self._ssh_client = paramiko.SSHClient()
-        self._ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
         # If no ssh password is provided, then try to use the key from the api settings
         if not self._ssh_password:
@@ -188,7 +189,7 @@ class SshTransport(AbstractTransport):
 
     def get_job_file_list(self, job_identifier):
         status = self._client_rpc.get_job_file_list(job_identifier)
-        if type(status) is list:
+        if type(status) is list and status[0] is not None:
             return status
         else:
             raise TransportGetJobFileListException(status[1])
@@ -201,11 +202,7 @@ class SshTransport(AbstractTransport):
             raise TransportGetJobStatusException(status[1])
 
     def get_jobs(self):
-        status = self._client_rpc.get_jobs()
-        if type(status) is list:
-            return status
-        else:
-            raise TransportGetJobsException(status[1])
+        return self._client_rpc.get_jobs()
 
     def start_job(self, katscript):
         return self._client_rpc.start_job(katscript)

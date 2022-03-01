@@ -1,7 +1,7 @@
 import pytest
 
 from finorch.transport.exceptions import TransportTerminateException, TransportGetJobFileException, \
-    TransportGetJobFileListException, TransportGetJobStatusException, TransportGetJobsException
+    TransportGetJobFileListException, TransportGetJobStatusException
 from finorch.transport.local import LocalTransport
 
 
@@ -20,9 +20,6 @@ class FakeRpc:
 
     def get_job_status(self, job_identifier):
         return None, "get_job_status_error"
-
-    def get_jobs(self,):
-        return None, "get_jobs_error"
 
     def stop_job(self, job_identifier):
         return None, "stop_job_error"
@@ -71,14 +68,6 @@ def test_get_job_status():
 
     with pytest.raises(TransportGetJobStatusException):
         transport.get_job_status(None)
-
-
-def test_get_jobs():
-    transport = LocalTransport('a', 'b')
-    transport._client_rpc = FakeRpc()
-
-    with pytest.raises(TransportGetJobsException):
-        transport.get_jobs()
 
 
 def test_stop_job():

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "finorch"
-version = "0.1.11"
+version = "0.2.0"
 description = "Finesse version 3 job orchestrator and manager. This package can be used to run parallel jobs on various remote platforms, as well as locally."
 authors = ["Lewis Lakerink <llakerink@swin.edu.au>", "Shibli Saleheen <ssaleheen@swin.edu.au>"]
 
@@ -12,6 +12,7 @@ SQLAlchemy = "^1.4.29"
 paramiko = "^2.9.2"
 finesse = "^3.0a2"
 htcondor = { version = "^9.5.0", optional = true }
+section = "^2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
@@ -19,6 +20,7 @@ coverage = "^6.1.1"
 pytest-cov = "^3.0.0"
 pyflakes = "^2.4.0"
 flake8 = "^4.0.1"
+testfixtures = "^6.18.5"
 
 [tool.poetry.extras]
 htcondor = ["htcondor"]

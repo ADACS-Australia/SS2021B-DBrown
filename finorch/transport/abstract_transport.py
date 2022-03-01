@@ -89,7 +89,7 @@ class AbstractTransport(abc.ABC):
         """
         Fetches all remote jobs using this transport
 
-        Should raise a TransportGetJobsException in the event of a problem
+        Does not raise any exception, should not fail
 
         :return: A list of dicts representing the details of the remote jobs
         """
